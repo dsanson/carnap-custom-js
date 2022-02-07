@@ -104,7 +104,7 @@ function initScoreKeeper() {
   const course = url.slice(-2)[0]
   const current = url.slice(-1)[0]
   
-
+  //TODO: move course specific config to config.json
   // grading standards
   let standards = { 
           R: { meets: 100 },
@@ -129,9 +129,6 @@ function initScoreKeeper() {
     }
 
 
-  if ( url.slice(-3)[0] == "shared" ) {
-    return // don't attempt to calculate scores on pages that aren't assigned
-  }
   
   const currenttype = current.slice(2,3).toUpperCase()
   if ( currenttype == "S" ) {
@@ -158,11 +155,20 @@ function initScoreKeeper() {
   }
 
   // create an empty div to load scores from userpage
- 
+
+  let points = 0
+  try {
+    if (typeof CarnapServerAPI.assignment.pointValue !== 'undefined') {
+      points = CarnapServerAPI.assignment.pointValue
+    }
+  } catch {
+    points = 0
+  }
+
   let assn = { 
                label: current,
                total: 0,
-               points: CarnapServerAPI.assignment.pointValue,
+               points: points,
                type: currenttype,
                status: "incomplete"
              }
@@ -172,7 +178,7 @@ function initScoreKeeper() {
   const pctreport = `<li>Percentage: <span class="pct">${assn.pct}%</span></li>`
   const ptsreport = `<li>Score: <span class="score">${assn.total}</span>/<span class="total">${assn.points}</span></li>`
   const statusreport = `<li>Status: <span class="status">${translation[assn.status]}</span></li>` 
-  const tiptext = `<li><span class="progresstip">undefined</span></li>`
+  const tiptext = `<li><span class="progresstip">Submissions not enabled. Perhaps you are not viewing this as an assignment?</span></li>`
 
   let progressbar = `<div id="progress" 
                               style="position:relative; 
@@ -216,7 +222,11 @@ function initScoreKeeper() {
   report.append(dropdown_ul)
 
   $('nav#navbar > ul > li:nth-child(3)').before(report);
- 
+
+  if ( url.slice(-3)[0] == "shared" ) {
+    return // don't attempt to calculate scores on pages that aren't assigned
+  }
+
   updateScores(userpage,scoreselector,assn,standards,translation)
  
   $('.exercise .buttonWrapper button').on('problem-submission', function() { 
