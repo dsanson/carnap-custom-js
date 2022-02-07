@@ -48,11 +48,11 @@ function customizeNavbar() {
     let li
 
     if (typeof link.links !== 'undefined') {
-      li  = $(`<li class='dropdown ${link.name}'>${link.icon}</li>`)
+      li  = $(`<li class="dropdown custom ${link.name}">${link.icon}</li>`)
       let ul = $('<ul/>')
       const keys = Object.keys(link.links)   
       keys.forEach((key,index) => {
-        ul.append(`<li><a href="${link.links[key]}" ${linkargs} >${key}</a></li>`)
+        ul.append(`<li class="custom ${link.name}"><a href="${link.links[key]}" ${linkargs} >${key}</a></li>`)
       })
       li.append(ul)
     } else {
