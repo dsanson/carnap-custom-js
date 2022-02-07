@@ -1,0 +1,41 @@
+
+{
+  "ISU_112_SPR_2022": {
+    "links": [
+      {
+        "name": "Zoom",
+        "icon": "<i class='zoom-icon' role='img' aria-label='Zoom'></i>",
+        "links": {
+          "8:00 am section": "https://illinoisstate.zoom.us/example",
+          "9:35 am section": "https://illinoisstate.zoom.us/example",
+          "Office Hours": "https://illinoisstate.zoom.us/example"
+        }
+      },
+      {
+        "name": "Reggienet",
+        "icon": "<i class='reggie-icon' role='img' aria-label='Reggienet'></i>",
+        "url": "https://reggienet.illinoisstate.edu/example"
+      },
+      {
+        "name": "Discord",
+        "icon": "<i class='bi bi-discord' role='img' aria-label='Discord'></i>",
+        "url": "http://example.com"
+      }
+    ]
+  },
+  "ISU_112_FALL_2021": {
+    "links": [
+      {
+        "name": "Reggienet",
+        "icon": "<i class='reggie-icon' role='img' aria-label='Reggienet'></i>",
+        "url": "https://reggienet.illinoisstate.edu/example"
+      },
+      {
+        "name": "Discord",
+        "icon": "<i class='bi bi-discord' role='img' aria-label='Discord'></i>",
+        "url": "http://example.com"
+      }
+    ]
+  }
+}
+
