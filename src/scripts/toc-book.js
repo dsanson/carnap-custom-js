@@ -24,7 +24,6 @@ function tableOfContents() {
     // const menu_icon = '☰';
     // const menu_button = '<div class="toc_button">' + menu_icon + '</div>';
 
-    let toc = $('<li id=toc class="dropdown"></li>')
     let toc_ul = $('<ul></ul>')
 
     toc_ul.load(book + ' #tableofcontents > ul,ol', function() {
@@ -33,19 +32,12 @@ function tableOfContents() {
 
       try {
         if (typeof CarnapServerAPI.user !== 'undefined') {
-          $('#toc a.no-link').removeAttr("href");
+          $('.book.dropdown a.no-link').removeAttr("href");
           $('#tableofcontents a.no-link').removeAttr("href");
         }
       } catch {
-        $('#toc > ul ul .enrolled').parent().remove();
-        $('#toc > ul ol .enrolled').parent().remove();
-        $('#toc > ol ul .enrolled').parent().remove();
-        $('#toc > ol ol .enrolled').parent().remove();
-        $('#tableofcontents > ul ul .enrolled').parent().remove();
-        $('#tableofcontents > ul ol .enrolled').parent().remove();
-        $('#tableofcontents > ol ul .enrolled').parent().remove();
-        $('#tableofcontents > ol ol .enrolled').parent().remove();
-        $('#tableofcontents input[type="checkbox"]').remove();
+        $('.book.dropdown .enrolled').parent().remove()
+        $('#tableofcontents .enrolled').parent().remove()
       }
 
     });
