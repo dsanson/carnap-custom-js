@@ -3,7 +3,7 @@
 // This script assumes you are using my course assignment
 // naming scheme and structure.
 
-function getPrevious(unit,type) {
+function getPrevious(unit,type,viewertype) {
   if ( type == 'R' ) {
     unit = String(parseInt(unit) - 1).padStart(2,'0')
     type = 'M'
@@ -15,6 +15,10 @@ function getPrevious(unit,type) {
     type = 'M'
   }
 
+  if ( viewertype == 'shared' && type == 'M' ) {
+    type = 'E'
+  }
+
   if ( unit < 0 || type == 'o') {
     return false
   } else {
@@ -22,15 +26,16 @@ function getPrevious(unit,type) {
   }
 }
 
-function getNext(unit,type) {
+function getNext(unit,type,viewertype) {
   if ( type == 'R' ) {
     type = 'E'
-  } else if ( type == 'E' ) {
-    type = 'M'
-  } else if ( type == 'M' || type == 'S' ) {
+  } else if ( type == 'M' || type == 'S' || ( type == 'E' && viewertype == 'shared' ) ) {
     type = 'R'
     unit = String(parseInt(unit) + 1).padStart(2,'0')
+  } else if ( type == 'E' ) {
+    type = 'M'
   }
+
 
   if ( unit == 19 ) {
     return false
@@ -43,6 +48,8 @@ function getNext(unit,type) {
 
 function addNavFooter() {
   let url = document.location.pathname.split('/')
+  const viewertype = url.slice(-3)[0] // 'shared' or 'assignment'
+
   let assn = url.slice(-1)[0]
   let unit = assn.slice(0,2)
   let type = assn.slice(2,3)
@@ -51,8 +58,8 @@ function addNavFooter() {
   if ( assn.includes('_') ) {
     version = assn.slice(-4)
   }
-  let prev = getPrevious(unit,type)
-  let next = getNext(unit,type)
+  let prev = getPrevious(unit,type,viewertype)
+  let next = getNext(unit,type,viewertype)
 
   let navfooter = $('<div class="navfooter"/>')
   let navfooterul = $('<ul/>')
