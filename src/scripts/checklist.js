@@ -91,7 +91,18 @@ function create_checklist(exs) {
     listdiv.attr("class", "exercise-checklist")
     list = $("<ul/>")
     for (i = 0; i < exs.length; i++) {
-      list.append('<li> <input type="checkbox" value="' + exs[i] + '"> <a href="#exercise-' + exs[i] + '">' + exs[i] + '</a></li>') 
+      let li = $(`<li> <input type="checkbox" value="${exs[i]}"> </li>`) 
+      let a = $(`<a href="#exercise-${exs[i]}">${exs[i]}</a>`)
+      // scroll exercises to center of page
+      a.click( function(e) {
+        e.preventDefault()
+        let id = ($(this).attr('href').split('#')[1])
+        document.getElementById(id).scrollIntoView({behavior: 'smooth', block: 'center'})
+      })
+      
+      li.append(a)
+      list.append(li)
+
     }
     listdiv.append(list)
     if (displayprogress) {
