@@ -26,7 +26,25 @@ function customizeNavbar() {
 
     return // no special links if not an assigned page
   }
-  
+
+  // add a light/dark theme switch
+  let themeswitch = $('<li class=themeswitch>Auto</li>');
+  themeswitch.click(function() {
+    let current = $(this).text();
+    if ( current == 'Auto' ) {
+      $(this).text('Dark')
+      $('html').attr('data-theme','dark')
+    } else if ( current == 'Dark' ) {
+      $(this).text('Light')
+      $('html').attr('data-theme','light')
+    } else {
+      $(this).text('Auto')
+      $('html').attr('data-theme','')
+    }
+  });
+  $('nav#navbar > ul > li:nth-child(3)').before(themeswitch)
+
+  // add links
   const linkargs = 'target="_blank" rel="noopener noreferrer"'
   
   // individual course settings
