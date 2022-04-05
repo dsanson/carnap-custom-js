@@ -28,18 +28,33 @@ function customizeNavbar() {
   }
 
   // add a light/dark theme switch
-  let themeswitch = $('<li class=themeswitch>Auto</li>');
+  let theme = localStorage.getItem('theme')
+  if ( theme === null ) {
+    theme = "auto"
+  }
+  $('html').attr('data-theme', theme)
+
+  let themeswitch = $(`<li class="themeswitch ${theme}">${theme}<br>mode</li>`);
   themeswitch.click(function() {
-    let current = $(this).text();
-    if ( current == 'Auto' ) {
-      $(this).text('Dark')
+    let current = $(this).html().replace(/<.*/,'')
+    if ( current == 'auto' ) {
+      $(this).html('dark<br>mode')
+      $(this).removeClass('auto')
+      $(this).addClass('dark')
       $('html').attr('data-theme','dark')
-    } else if ( current == 'Dark' ) {
-      $(this).text('Light')
+      localStorage.setItem('theme','dark')
+    } else if ( current == 'dark' ) {
+      $(this).html('light<br>mode')
+      $(this).removeClass('dark')
+      $(this).addClass('light')
       $('html').attr('data-theme','light')
+      localStorage.setItem('theme','light')
     } else {
-      $(this).text('Auto')
+      $(this).html('auto<br>mode')
+      $(this).removeClass('light')
+      $(this).addClass('auto')
       $('html').attr('data-theme','')
+      localStorage.removeItem('theme')
     }
   });
   $('nav#navbar > ul > li:nth-child(3)').before(themeswitch)
