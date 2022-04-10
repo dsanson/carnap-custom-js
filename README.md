@@ -327,9 +327,17 @@ auto-generation features.
 
 TODO: clean this up and revert to a simpler script.
 
-## scripts/truthtable-navigation.js
+## scripts/truthtable-keys.js
 
-Easy navigation of truth table cells using the arrow keys.
+Easily navigate truth tables using the keyboard.
 
-WARNING: this over-rides the default use of arrow keys for the select boxes
-within truthtables. I don't know if this is an accessibility issue or not.
+-   Use arrow keys, HJKL, or WASD to move from cell to cell.
+-   Use delete or backspace to delete a cell (i.e., select '-')
+
+I use this together with custom CSS that removes most of the "dropdown"
+decoration from each truth table cell.
+
+TODO: minimal CSS
+
+WARNING: this overrides the default use of arrow keys for the select boxes
+within truth tables. This is generally a bad idea for accessibility.

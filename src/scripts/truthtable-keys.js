@@ -1,4 +1,8 @@
-// Enable the use of arrows to navigate truth tables
+// Keyboard navigation for truth tables
+//
+// Movement using arrow keys, HJKL, or WASD.
+//
+// Delete (i.e., select '-') using delete or backspace
 
 function moveRight() {
   $(this).parent().nextAll().has('select').children().first().focus()
@@ -25,23 +29,50 @@ function enableTruthtableArrowKeys() {
   const rightarrow = 39
   const downarrow = 40
 
+  const leftvim = 72 //h
+  const upvim = 75 //k
+  const rightvim = 76 //l
+  const downvim = 74 //j
+
+  const leftwasd = 65 //a 
+  const upwasd = 87 //w
+  const rightwasd = 68 //d
+  const downwasd = 83 //s
+
+  const backspace = 8 
+  const deletekey = 46
+
   $('[data-carnap-type="truthtable"] td select').on('keydown', function(event) {
+
     switch (event.which) {
       case leftarrow:
+      case leftvim:
+      case leftwasd:
         event.preventDefault()
         moveLeft.apply($(this))
         break
       case uparrow:
+      case upvim:
+      case upwasd:
         event.preventDefault()
         moveUp.apply($(this))
         break
       case rightarrow:
+      case rightvim:
+      case rightwasd:
         event.preventDefault()
         moveRight.apply($(this)) 
         break
       case downarrow:
+      case downvim:
+      case downwasd:
         event.preventDefault()
         moveDown.apply($(this))
+        break
+      case backspace:
+      case deletekey:
+        event.preventDefault()
+        $(this).children().eq(0).prop('selected',true)
         break
       }
   })
@@ -51,31 +82,3 @@ $(document).ready(function() {
     enableTruthtableArrowKeys()
 });
 
-// {
-//     e.preventDefault();
-//     switch(e.keyCode)
-//     {
-//       case 37 : var first_cell = $(this).index();
-//                 if(first_cell==0)
-//                 {
-//                   $(this).parent().prev().children("td:last-child").focus();
-//                 }
-//                 else
-//                   $(this).prev("td").focus();break;//left arrow
-//       case 39 : var last_cell=$(this).index();
-//                 if(last_cell==cell-1)
-//                 {
-//                   $(this).parent().next().children("td").eq(0).focus();
-//                 }
-//                 $(this).next("td").focus();break;//right arrow
-//       case 40 : var child_cell = $(this).index();	
-//                 $(this).parent().next().children("td").eq(child_cell).focus();break;//down arrow
-//       case 38 : var parent_cell = $(this).index();
-//                 $(this).parent().prev().children("td").eq(parent_cell).focus();break;//up arrow
-//     }
-//
-//     if(e.keyCode==113)
-//     {
-//         $(this).children().focus();
-//     }
-// });
