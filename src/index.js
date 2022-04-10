@@ -13,4 +13,5 @@ import './scripts/display-mode.js';
 import './scripts/hypothes.is.config.js';
 import './scripts/checklist.js';
 import './scripts/argmaps.js';
+import './scripts/truthtable-navigation.js';
 
