@@ -42,7 +42,7 @@ function enableTruthtableArrowKeys() {
   const backspace = 8 
   const deletekey = 46
 
-  $('[data-carnap-type="truthtable"] td select').on('keydown', function(event) {
+  $('[data-carnap-type="truthtable"] td select, .itt td select').on('keydown', function(event) {
 
     switch (event.which) {
       case leftarrow:
