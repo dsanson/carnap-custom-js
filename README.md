@@ -26,21 +26,37 @@ explain to you how to install and use webpack.
 Right now, the only script that *requires* webpack is `navbar.js`, which uses
 webpack to import a json file, `src/config.json`, containing course specific settings.
 
-For my set up, I first build using webpack:
+I believe these steps should allow you to replicate my setup:
 
+1.  Clone the repository:
+
+    ```bash
+    git clone https://github.com/dsanson/logic-book-js
+    ```
+
+2.  Copy the example config to config:
+
+    ```bash
+    cd logic-book-js/src
+    cp config.example.json config.json
+    ```
+
+3.  Return to the root directory, and install npm dependencies:
+
+    ```bash
+    cd ..
+    npm install
+    ```
+
+4.  Build the script:
+
+    ```bash
     npm run build
+    ```
 
-Then I upload the two resulting files, found in the `dist` folder, to Carnap:
-
-    logic-book.js
-    logic-book.js.map
-
-I make `logic-book.js` a Shared, Link-Only document on Carnap.
-I keep `logic-book.js.map` set to Private, since it is just for debugging
-purposes.
-
-Then I include a link to the shared `logic-book.js` in the YAML header of
-each of my class assignments.
+You can then upload `logic-book.js` from the `dist` folder to Carnap, and make
+it a "Shared, Link-Only" document, and link to it from your Carnap document
+YAML header.
 
 ## scripts/navbar.js
 
