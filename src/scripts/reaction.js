@@ -23,7 +23,11 @@ function register_events() {
           selector = selector + index
         }
       })
-      $('.reaction.incorrect[data-ex="' + exercise + '"][data-ans~="' + selector + '"').show()
+      if ( $('.reaction.incorrect[data-ex="' + exercise + '"][data-ans~="' + selector + '"').length ) {
+        $('.reaction.incorrect[data-ex="' + exercise + '"][data-ans~="' + selector + '"').show()
+      } else {
+        $('.reaction.incorrect[data-ex="' + exercise + '"][data-ans~="other"').show()
+      }
     }
   })
 

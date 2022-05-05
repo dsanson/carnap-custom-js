@@ -464,6 +464,18 @@ the first and third options, or selected the first and fourth options.
 :::
 ```
 
+You can also use the selector 'other', which will provide feedback for
+incorrect answers that don't match the selectors of any of the other feedback
+divs:
+
+```
+:::{.reaction .incorrect ex=10 ans="other"}
+Feedback for an incorrect response to exercise 10, for students who select
+options that don't have any other specific feedback.
+:::
+```
+
+
 TODO: automatically attach reactions to the immediately preceding exercise.
 
 TODO: tailored feedback for other exercise types???
