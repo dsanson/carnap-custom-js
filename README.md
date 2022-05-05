@@ -357,3 +357,119 @@ TODO: minimal CSS
 
 WARNING: this overrides the default use of arrow keys for the select boxes
 within truth tables. This is generally a bad idea for accessibility.
+
+## scripts/defs.js
+
+This script gathers inline definitions into a definition list. I use it to
+append definitions of key concepts to the end of each chapter.
+
+Here is what an inline definition looks like:
+
+```markdown
+[An argument is [valid]{.vocab} iff it is impossible for its premises to be
+true and its conclusion false.]{.def}
+```
+
+Place a div with the class '.defs' somewhere in your document, and it will be
+filled with an html definition list for each definition. So, something like:
+
+```markdown
+:::defs
+:::
+```
+
+becomes:
+
+```html
+<dl>
+<dt><span class="vocab">valid</span></dt>
+<dd>
+<span class="def">An argument is <span class="vocab">valid</span> iff it
+is impossible for its premises to be true and its conclusion
+false.</span>
+</dd>
+</dl>
+```
+
+## scripts/reaction.js
+
+This script makes it possible to offer students feedback based on what they
+submit. 
+
+In your source document, wrap your feedback in divs, like so:
+
+```
+:::{.reaction .correct ex=10}
+Feedback for a correct response to exercise 10
+:::
+
+:::{.reaction .incorrect ex=10}
+Feedback for an incorrect response to exercise 10
+:::
+```
+
+Use custom CSS to hide these divs when the page is first loaded, e.g.,
+
+```css
+.reaction {
+  display: none;
+  border-radius: .5em;
+  padding: 1em;
+}
+
+.reaction.correct
+  border: thick solid green;
+}
+
+.reaction.incorrect {
+  border: thick solid red;
+}
+```
+
+For multiple choice and multiple selection exercises, it is possible to
+provide tailored feedback based on which answers the student selected.
+To do this, provide a "selector" as the value of the "ans" attribute.
+
+In the simplest case, the selector is the index (starting with zero) of the
+selected answer:
+
+```
+:::{.reaction .incorrect ex=10 ans=0}
+Feedback for an incorrect response to exercise 10, where the student selected
+the first option.
+:::
+
+:::{.reaction .incorrect ex=10 ans=2}
+Feedback for an incorrect response to exercise 10, where the student selected
+the third option.
+:::
+```
+
+For multiple selection questions, concatenate the indices of the selected
+answers:
+
+```
+:::{.reaction .incorrect ex=10 ans=03}
+Feedback for an incorrect response to exercise 10, where the student selected
+the first and fourth options.
+:::
+```
+
+To combine multiple selectors, separate them by spaces:
+
+```
+:::{.reaction .incorrect ex=10 ans="02 03"}
+Feedback for an incorrect response to exercise 10, where the student either selected
+the first and third options, or selected the first and fourth options.
+:::
+```
+
+TODO: automatically attach reactions to the immediately preceding exercise.
+
+TODO: tailored feedback for other exercise types???
+
+
+
+
+
+

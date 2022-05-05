@@ -14,4 +14,6 @@ import './scripts/hypothes.is.config.js';
 import './scripts/checklist.js';
 import './scripts/argmaps.js';
 import './scripts/truthtable-keys.js';
+import './scripts/defs.js';
+import './scripts/reaction.js';
 
