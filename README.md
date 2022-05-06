@@ -363,32 +363,23 @@ within truth tables. This is generally a bad idea for accessibility.
 This script gathers inline definitions into a definition list. I use it to
 append definitions of key concepts to the end of each chapter.
 
-Here is what an inline definition looks like:
+An inline definition should be given the class 'def'. The defined term(s)
+within the definition should be given the class 'vocab'. So, using pandoc's
+markdown:
 
 ```markdown
 [An argument is [valid]{.vocab} iff it is impossible for its premises to be
 true and its conclusion false.]{.def}
 ```
 
-Place a div with the class '.defs' somewhere in your document, and it will be
-filled with an html definition list for each definition. So, something like:
+Inline definitions will populate an html definition list, inserted into any
+element with the class 'defs'. So, using pandoc's markdown, I add something
+like this to the end of each chapter, where I want to provide a summary list
+of definitions:
 
 ```markdown
 :::defs
 :::
-```
-
-becomes:
-
-```html
-<dl>
-<dt><span class="vocab">valid</span></dt>
-<dd>
-<span class="def">An argument is <span class="vocab">valid</span> iff it
-is impossible for its premises to be true and its conclusion
-false.</span>
-</dd>
-</dl>
 ```
 
 ## scripts/reaction.js
@@ -396,7 +387,9 @@ false.</span>
 This script makes it possible to offer students feedback based on what they
 submit. 
 
-In your source document, wrap your feedback in divs, like so:
+Feedback should be given the class 'reaction' and either 'correct' or
+'incorrect'. Use the attribute 'data-ex' to specify the exercise it is
+attached to:
 
 ```
 :::{.reaction .correct ex=10}
