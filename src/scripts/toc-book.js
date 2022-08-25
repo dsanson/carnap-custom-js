@@ -14,10 +14,14 @@
 function tableOfContents() {                                                                            
 
     const current = document.location.pathname.split('/').slice(-1)[0]
+    const course = document.location.pathname.split('/').slice(-2)[0]
     
     let version = ''
     if ( current.includes('_') ) {
       version = current.slice(-4)
+    }
+    else if ( course == 'ISU_112_FALL_2022' ) {
+      version = '_f22'
     }
     const book = 'Book' + version
 
