@@ -37,7 +37,7 @@ function getNext(unit,type,viewertype) {
   }
 
 
-  if ( unit == 19 ) {
+  if ( unit == 18 ) {
     return false
   } else if ( type == 'o' ) {
     return '00R'
