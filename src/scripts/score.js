@@ -111,15 +111,6 @@ function initScoreKeeper() {
           E: { meets: 80 },
           M: { meets: 60, excels: 80 }
         }
-   
-  if (! current.includes('_') ) {
-    standards = { 
-          R: { meets: 90 },
-          E: { meets: 80 },
-          M: { meets: 60, excels: 80 }
-    }
-  }
-
 
   // translation of 'meets' and 'excels' into student facing terminology
   const translation = {
