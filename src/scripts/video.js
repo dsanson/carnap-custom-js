@@ -54,7 +54,7 @@ import Plyr from 'plyr';
 
 function insertVids() {
 
-  const server = "https://dsanson.github.io/logic/vid/"
+  const server = "https://dsanson.github.io/logic-materials/vid/"
 
   $('div[data-carnap-video]').each(function() {
     let url = $(this).attr('data-carnap-video')
@@ -110,8 +110,8 @@ function setPosterandSubtitles() {
   $('video').each( function() {
      const src = $(this).attr('src')
      const root = src.split('/').slice(-1)[0].split('.').slice(0,-1).join('.')
-     const imghost = 'https://dsanson.github.io/logic/vid/'
-     const vtthost = 'https://dsanson.github.io/logic/vid/'
+     const imghost = 'https://dsanson.github.io/logic-materials/vid/'
+     const vtthost = 'https://dsanson.github.io/logic-materials/vid/'
      const poster = imghost + root + '.jpg'
      const subs = vtthost + root + '.vtt'
      const track = `<track kind="captions" label="English captions" src="${subs}" srclang="en" default />`

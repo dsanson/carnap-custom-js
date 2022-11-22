@@ -26,21 +26,37 @@ explain to you how to install and use webpack.
 Right now, the only script that *requires* webpack is `navbar.js`, which uses
 webpack to import a json file, `src/config.json`, containing course specific settings.
 
-For my set up, I first build using webpack:
+I believe these steps should allow you to replicate my setup:
 
+1.  Clone the repository:
+
+    ```bash
+    git clone https://github.com/dsanson/logic-book-js
+    ```
+
+2.  Copy the example config to config:
+
+    ```bash
+    cd logic-book-js/src
+    cp config.example.json config.json
+    ```
+
+3.  Return to the root directory, and install npm dependencies:
+
+    ```bash
+    cd ..
+    npm install
+    ```
+
+4.  Build the script:
+
+    ```bash
     npm run build
+    ```
 
-Then I upload the two resulting files, found in the `dist` folder, to Carnap:
-
-    logic-book.js
-    logic-book.js.map
-
-I make `logic-book.js` a Shared, Link-Only document on Carnap.
-I keep `logic-book.js.map` set to Private, since it is just for debugging
-purposes.
-
-Then I include a link to the shared `logic-book.js` in the YAML header of
-each of my class assignments.
+You can then upload `logic-book.js` from the `dist` folder to Carnap, and make
+it a "Shared, Link-Only" document, and link to it from your Carnap document
+YAML header.
 
 ## scripts/navbar.js
 
@@ -341,3 +357,124 @@ TODO: minimal CSS
 
 WARNING: this overrides the default use of arrow keys for the select boxes
 within truth tables. This is generally a bad idea for accessibility.
+
+## scripts/defs.js
+
+This script gathers inline definitions into a definition list. I use it to
+append definitions of key concepts to the end of each chapter.
+
+An inline definition should be given the class 'def'. The defined term(s)
+within the definition should be given the class 'vocab'. So, using pandoc's
+markdown:
+
+```markdown
+[An argument is [valid]{.vocab} iff it is impossible for its premises to be
+true and its conclusion false.]{.def}
+```
+
+Inline definitions will populate an html definition list, inserted into any
+element with the class 'defs'. So, using pandoc's markdown, I add something
+like this to the end of each chapter, where I want to provide a summary list
+of definitions:
+
+```markdown
+:::defs
+:::
+```
+
+## scripts/reaction.js
+
+This script makes it possible to offer students feedback based on what they
+submit. 
+
+Feedback should be given the class 'reaction' and either 'correct' or
+'incorrect'. Use the attribute 'data-ex' to specify the exercise it is
+attached to:
+
+```
+:::{.reaction .correct ex=10}
+Feedback for a correct response to exercise 10
+:::
+
+:::{.reaction .incorrect ex=10}
+Feedback for an incorrect response to exercise 10
+:::
+```
+
+Use custom CSS to hide these divs when the page is first loaded, e.g.,
+
+```css
+.reaction {
+  display: none;
+  border-radius: .5em;
+  padding: 1em;
+}
+
+.reaction.correct
+  border: thick solid green;
+}
+
+.reaction.incorrect {
+  border: thick solid red;
+}
+```
+
+For multiple choice and multiple selection exercises, it is possible to
+provide tailored feedback based on which answers the student selected.
+To do this, provide a "selector" as the value of the "ans" attribute.
+
+In the simplest case, the selector is the index (starting with zero) of the
+selected answer:
+
+```
+:::{.reaction .incorrect ex=10 ans=0}
+Feedback for an incorrect response to exercise 10, where the student selected
+the first option.
+:::
+
+:::{.reaction .incorrect ex=10 ans=2}
+Feedback for an incorrect response to exercise 10, where the student selected
+the third option.
+:::
+```
+
+For multiple selection questions, concatenate the indices of the selected
+answers:
+
+```
+:::{.reaction .incorrect ex=10 ans=03}
+Feedback for an incorrect response to exercise 10, where the student selected
+the first and fourth options.
+:::
+```
+
+To combine multiple selectors, separate them by spaces:
+
+```
+:::{.reaction .incorrect ex=10 ans="02 03"}
+Feedback for an incorrect response to exercise 10, where the student either selected
+the first and third options, or selected the first and fourth options.
+:::
+```
+
+You can also use the selector 'other', which will provide feedback for
+incorrect answers that don't match the selectors of any of the other feedback
+divs:
+
+```
+:::{.reaction .incorrect ex=10 ans="other"}
+Feedback for an incorrect response to exercise 10, for students who select
+options that don't have any other specific feedback.
+:::
+```
+
+
+TODO: automatically attach reactions to the immediately preceding exercise.
+
+TODO: tailored feedback for other exercise types???
+
+
+
+
+
+

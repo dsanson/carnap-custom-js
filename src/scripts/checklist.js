@@ -16,6 +16,7 @@
 // TODO: clean this up, removing old cruft. Probably split into separate scripts.
 //
 
+import * as utils from './utils.js';
 
 // SETTINGS
 
@@ -37,7 +38,7 @@ function gather_exercises() {
   let exs;
   exs = [];
   $('.exercise').each(function () {
-    v = $(this).find("[data-carnap-submission]").attr('data-carnap-submission');
+    let v = $(this).find("[data-carnap-submission]").attr('data-carnap-submission');
     // don't include exercises that cannot be submitted!
     if (typeof v !== 'undefined' && v != "none" && v != 'saveRule') {
       v = v.replace('saveAs:','');
@@ -48,7 +49,7 @@ function gather_exercises() {
       exs.push(v)
 
       if (addcheckboxestoexercises) {
-        s = $(this).children('span');
+        let s = $(this).children('span');
 
         // We have two cases to handle. By default, exercises do not display
         // point value, and so have just one child span element. But if an 
@@ -80,24 +81,25 @@ function create_checklist(exs) {
   // -   checks the actual point value of each exercise
   // -   checks for duplicate exercises
   //
-  total = pts * exs.length
+  let total = pts * exs.length
   $('.auto-tally').each(function() {
     if (displayprogress) {
       report = $("<div/>")
       report.attr("class", "report")
       report.html('<span class=score>0</span> out of <span class=total>' + total + '</span>: <span class=pct>0</span>%')
     }
-    listdiv = $("<div/>")
+    let listdiv = $("<div/>")
     listdiv.attr("class", "exercise-checklist")
-    list = $("<ul/>")
-    for (i = 0; i < exs.length; i++) {
+    let list = $("<ul/>")
+    for (let i = 0; i < exs.length; i++) {
       let li = $(`<li> <input type="checkbox" value="${exs[i]}"> </li>`) 
       let a = $(`<a href="#exercise-${exs[i]}">${exs[i]}</a>`)
       // scroll exercises to center of page
       a.click( function(e) {
         e.preventDefault()
         let id = ($(this).attr('href').split('#')[1])
-        document.getElementById(id).scrollIntoView({behavior: 'smooth', block: 'center'})
+        //document.getElementById(id).scrollIntoView({behavior: 'smooth', block: 'center'})
+        utils.scrollToView(id)
       })
       
       li.append(a)
@@ -185,7 +187,7 @@ function process_checkboxes(items,namespace) {
 function checklist() {
 
   let namespace = 'checklist';
-
+  let items = {};
   function successCallback(as) {
     // reveal elements with the class 'enrolled'
     $('.enrolled').toggle();
@@ -193,7 +195,7 @@ function checklist() {
     $('.enrolledsublists > ul ol').toggle();
     $('.enrolledsublists > ol ul').toggle();
     $('.enrolledsublists > ol ol').toggle();
-
+    
     // read assignment state
     if (typeof as[namespace] === 'undefined') {
       items = {};
@@ -220,9 +222,9 @@ function checklist() {
 // report.
 function tallychecklist() {
   $('div.auto-tally, div.tally').each(function() {
-    points=Number($(this).attr('points'))
-    total=Number($(this).attr('total'))
-    score = 0
+    let points=Number($(this).attr('points'))
+    let total=Number($(this).attr('total'))
+    let score = 0
     $(this).find(':checkbox').each(function() {
       if ($(this).prop('checked')) {
         score = score + points

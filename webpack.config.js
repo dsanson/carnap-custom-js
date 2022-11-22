@@ -1,16 +1,16 @@
 const path = require('path');
 
 module.exports = {
-  mode: 'development',
+  mode: 'production',
   entry: './src/index.js',
   devtool: 'source-map',
   output: {
     filename: 'logic-book.js',
     path: path.resolve(__dirname, 'dist'),
-    // library: {
-    //   name: 'logicBook',
-    //   type: 'umd'
-    // },
+    library: {
+      name: 'LogicBook',
+      type: 'umd'
+    },
     clean: true
   },
   module: {

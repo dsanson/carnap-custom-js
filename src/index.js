@@ -1,3 +1,4 @@
+
 import './scripts/navbar.js';
 import './scripts/navfooter.js';
 import './scripts/assigned.js';
@@ -17,4 +18,6 @@ import './scripts/argmaps.js';
 import './scripts/truthtable-keys.js';
 import './scripts/timer.js';
 import './scripts/mobile-hover.js';
+import './scripts/defs.js';
+import './scripts/reaction.js';
 
