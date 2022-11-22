@@ -17,7 +17,9 @@ function tableOfContents() {
     const course = document.location.pathname.split('/').slice(-2)[0]
     
     let version = ''
-    if ( current.includes('_') ) {
+    if ( current.includes('-') ) {
+      version = current.slice(-9,-5)
+    } else if ( current.includes('_') ) {
       version = current.slice(-4)
     }
     else if ( course == 'ISU_112_FALL_2022' ) {

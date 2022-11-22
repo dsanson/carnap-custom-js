@@ -1,3 +1,4 @@
+/* eslint-env jquery */
 // Display a list of enabled derived rules.
 //
 // Rules are grabbed from the User page, and used to populate any
@@ -8,29 +9,29 @@
 function loadDerivedRules() {                                                                            
 
   function deleteRule(name) {
-      url = $('#navbar > ul > li.dropdown > ul > li:nth-child(1) > a').attr('href');
-      jQuery.ajax({
-          url: url,
-          type: 'DELETE',
-          contentType: "application/json",
-          data: JSON.stringify(name),
-          success: function(data) {
-              var el = document.getElementById("rule-" + name);
-              el.parentElement.removeChild(el);
-              window.alert("Deleted the rule " + name);
-              },
-          error: function(data) {
-              window.alert("Error, couldn't delete the rule" + name)
-              },
-      });
-  };
-
-  function tryDeleteRule(name) {
-      if (confirm("Permanently delete the rule " + name + "?")) {
-          deleteRule(name);
-      }
+    const url = $('#navbar > ul > li:last-child > ul > li:first-child > a').attr('href') 
+    console.log(url)
+    jQuery.ajax({
+      url: url,
+      type: 'DELETE',
+      contentType: "application/json",
+      data: JSON.stringify(name),
+      success: function(data) {
+        var el = document.getElementById("rule-" + name);
+        el.parentElement.removeChild(el);
+        window.alert("Deleted the rule " + name);
+      },
+      error: function(name) {
+        window.alert("Error, couldn't delete the rule" + name)
+      },
+    });
   }
 
+  function tryDeleteRule(name) {
+    if (confirm("Permanently delete the rule " + name + "?")) {
+      deleteRule(name);
+    }
+  }
 
   let userpage = '/user'
   // check to see if user is logged in as instructor
@@ -44,15 +45,15 @@ function loadDerivedRules() {
   }
 
   $('.derived-rules').load(userpage + ' .derivedRules', function() {
-    n = 1
+    let n = 1
     $('.derived-rules td').each(function() { 
       $(this).html(
         $(this).html()
-          .replace(/φ/g,'<span class="P" data-to=' + n + '></span>')
-          .replace(/ψ/g,'<span class="Q" data-to=' + n + '></span>')
-          .replace(/χ/g,'<span class="R" data-to=' + n + '></span>')
-          .replace(/θ/g,'<span class="S" data-to=' + n + '></span>')
-          .replace(/delete rule/,'')
+        .replace(/φ/g,'<span class="P" data-to=' + n + '></span>')
+        .replace(/ψ/g,'<span class="Q" data-to=' + n + '></span>')
+        .replace(/χ/g,'<span class="R" data-to=' + n + '></span>')
+        .replace(/θ/g,'<span class="S" data-to=' + n + '></span>')
+        .replace(/delete rule/,'')
       )
       n = n + 1;
     });
@@ -66,7 +67,9 @@ function loadDerivedRules() {
     });
 
     if ($('.derived-rules').html().trim() == "") {
-      $('.derived-rules').html('<p class="empty">Once you have enabled some derived rules, they will appear here</p>');
+      $('.derived-rules').html(
+        '<p class="empty">Once you have enabled some derived rules, they will appear here</p>'
+      );
     }
     else if ( typeof makeShapesLive === 'function' ) {
       makeShapesLive()
