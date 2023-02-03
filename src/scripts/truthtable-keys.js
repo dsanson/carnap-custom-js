@@ -5,7 +5,11 @@
 //
 // Delete (i.e., select '-') using delete or backspace
 //
+<<<<<<< HEAD
 // Select '✓' using y or c, select '✗' using n or x.
+=======
+// Select ✓ using c or y and ✗ using x or n
+>>>>>>> refs/remotes/origin/main
 
 function moveRight() {
   $(this).parent().nextAll().has('select').children().first().focus()
