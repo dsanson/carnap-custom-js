@@ -349,14 +349,19 @@ Easily navigate truth tables using the keyboard.
 
 -   Use arrow keys, HJKL, or WASD to move from cell to cell.
 -   Use delete or backspace to delete a cell (i.e., select '-')
+-   Use y or c to select ✓ and n or x to select ✗.
 
 I use this together with custom CSS that removes most of the "dropdown"
 decoration from each truth table cell.
 
 TODO: minimal CSS
 
-WARNING: this overrides the default use of arrow keys for the select boxes
-within truth tables. This is generally a bad idea for accessibility.
+This overrides the default use of arrow keys for the select boxes within truth
+tables. This may be a bad idea for accessibility. However, you can still use
+the keyboard to pop up the selection menu, by pressing the spacebar, and then
+use the arrow keys to navigate within the pop up menu. I *suspect* that easy
+navigation of the table is a net gain for accessibility, but I am no expert,
+and would be interested in any feedback on this.
 
 ## scripts/defs.js
 
