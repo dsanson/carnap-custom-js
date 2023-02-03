@@ -8,7 +8,7 @@
 // -   buggy
 
 function initSaveWork() {
-  const debug = true;
+  const debug = false;
   
   // get the assignment name
   a = location.pathname.split('/').slice(-1)[0]
@@ -22,9 +22,8 @@ function initSaveWork() {
 
   function getId($exercise) {
 
-
-    l = $exercise.parent().attr('data-carnap-label')
-    t = $exercise.attr('data-carnap-type')
+    let l = $exercise.parent().attr('data-carnap-label')
+    let t = $exercise.attr('data-carnap-type')
     // qualitative problems come in many types
     if (t == 'qualitative') {
       t = $exercise.attr('data-carnap-qualitativetype')
@@ -40,7 +39,7 @@ function initSaveWork() {
     if (t == 'numerical') t = '-nu'
     if (t == 'translate') t = '-tr'
     
-    id = l + t 
+    let id = l + t 
     
     n = 0
     while ( ids.includes(id) ) {
@@ -56,7 +55,7 @@ function initSaveWork() {
       const exerciseId = getId($exercise);
       const studentWork = $exercise.find(workdiv).val();
       items[exerciseId] = studentWork;
-      // if (debug) console.log('Saving ' + exerciseId + ': ' + studentWork);
+      if (debug) console.log('Saving ' + exerciseId + ': ' + studentWork);
   }
 
   function saveArray($exercise, workdiv) {
@@ -65,8 +64,7 @@ function initSaveWork() {
       $exercise.find(workdiv).each(function () {
         items[exerciseId].push($(this).val());
       });
-
-      //if (debug) console.log('Saving ' + exerciseId + ': ' + JSON.stringify(items[exerciseId]));
+      if (debug) console.log('Saving ' + exerciseId + ': ' + JSON.stringify(items[exerciseId]));
   }
 
   function saveArraytoCheckboxes($exercise, workdiv) {
@@ -75,7 +73,7 @@ function initSaveWork() {
       $exercise.find(workdiv).each(function () {
         items[exerciseId].push($(this).prop('checked'));
       });
-      //if (debug) console.log('Saving ' + exerciseId + ': ' + JSON.stringify(items[exerciseId]));
+      if (debug) console.log('Saving ' + exerciseId + ': ' + JSON.stringify(items[exerciseId]));
   }
 
   function saveWork() {
@@ -101,9 +99,9 @@ function initSaveWork() {
 
     // Truth Tables
     // disabled, because caused trouble on reload
-    // $('[data-carnap-type=truthtable]').each(function () {
-    //   saveArray($(this),'select');
-    // });
+    $('[data-carnap-type=truthtable]').each(function () {
+      saveArray($(this),'select');
+    });
 
     // Multiple Choice and Multiple Selection
     $('[data-carnap-qualitativetype=multiplechoice], [data-carnap-qualitativetype=multipleselection]').each(function () {
@@ -124,8 +122,12 @@ function initSaveWork() {
       const studentWork = items[exerciseId];
       // check that the saved data is a string or number
       if (typeof(studentWork) == "string" || typeof(studentWork) == "number")  {
-        //if (debug) console.log('loading ' + exerciseId + ': ' + studentWork)
-        $exercise.find(workdiv).val(studentWork);
+        if (debug) console.log('loading ' + exerciseId + ': ' + studentWork)
+        $exercise.find(workdiv).each( function() {
+          $(this).val(studentWork);
+          // trigger the keyup event to get Carnap to error check derivations
+          $(this)[0].dispatchEvent(new Event('keyup', { 'bubbles': true }));
+        })
       } else {
         console.log(exerciseId + ' not loaded: wrong type');
       }
@@ -138,10 +140,14 @@ function initSaveWork() {
       studentWork = items[exerciseId];
       // check that saved data is an array, not a string
       if (typeof(studentWork) == "object") {
-        // if (debug) console.log('loading ' + exerciseId)
+        if (debug) console.log('loading ' + exerciseId)
         $exercise.find(workdiv).each(function () {
           const value = studentWork.shift();
           $(this).val(value);
+          // we need to fire the change event for truthtables
+          // and the keyup event for countermodels
+          $(this)[0].dispatchEvent(new Event('change', { 'bubbles': true }));
+          $(this)[0].dispatchEvent(new Event('keyup', { 'bubbles': true }));
         });
       } else {
         console.log(exerciseId + ' not loaded: wrong type');
@@ -155,10 +161,14 @@ function initSaveWork() {
       studentWork = items[exerciseId];
       // check that saved data is an array, not a string
       if (typeof(studentWork) == "object") {
-        // if (debug) console.log('loading ' + exerciseId)
+        if (debug) console.log('loading ' + exerciseId)
         $exercise.find(workdiv).each(function () {
           const value = studentWork.shift();
           $(this).prop('checked', value);
+          if ( value ) {
+            // when value is true, simulate click event to trigger carnap to process the input
+            $(this)[0].dispatchEvent(new Event('click', { 'bubbles': true }));
+          }
         });
       } else {
         console.log(exerciseId + ' not loaded: wrong type');
@@ -189,9 +199,9 @@ function initSaveWork() {
 
     // Truth Tables
     // disabled; caused trouble on reload
-    // $('[data-carnap-type=truthtable]').each(function () {
-    //   loadArray($(this), 'select');
-    // });
+    $('[data-carnap-type=truthtable]').each(function () {
+      loadArray($(this), 'select');
+    });
     
     // Multiple Choice and Multiple Selection
     $('[data-carnap-qualitativetype=multiplechoice], [data-carnap-qualitativetype=multipleselection]').each(function () {
