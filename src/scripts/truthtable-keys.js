@@ -1,8 +1,11 @@
+/* eslint-env jquery */
 // Keyboard navigation for truth tables
 //
 // Movement using arrow keys, HJKL, or WASD.
 //
 // Delete (i.e., select '-') using delete or backspace
+//
+// Select '✓' using y or c, select '✗' using n or x.
 
 function moveRight() {
   $(this).parent().nextAll().has('select').children().first().focus()
@@ -42,6 +45,11 @@ function enableTruthtableArrowKeys() {
   const backspace = 8 
   const deletekey = 46
 
+  const letterc = 67
+  const lettern = 78 
+  const letterx = 88
+  const lettery = 89
+
   $('[data-carnap-type="truthtable"] td select, .itt td select').on('keydown', function(event) {
 
     switch (event.which) {
@@ -73,12 +81,22 @@ function enableTruthtableArrowKeys() {
       case deletekey:
         event.preventDefault()
         $(this).children().eq(0).prop('selected',true)
+        $(this)[0].dispatchEvent(new Event('change', { 'bubbles': true }));
+        break
+      case letterc:
+      case lettery:
+        event.preventDefault()
+        $(this).children().filter( function() { return $(this).prop('innerHTML') == "✓"}).prop('selected',true)
+        $(this)[0].dispatchEvent(new Event('change', { 'bubbles': true }));
+        break
+      case letterx:
+      case lettern:
+        event.preventDefault()
+        $(this).children().filter( function() { return $(this).prop('innerHTML') == "✗"}).prop('selected',true)
+        $(this)[0].dispatchEvent(new Event('change', { 'bubbles': true }));
         break
       }
   })
 }
 
-$(document).ready(function() {                                                                          
-    enableTruthtableArrowKeys()
-});
-
+document.addEventListener("carnap-loaded", enableTruthtableArrowKeys)
