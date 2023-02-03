@@ -3,6 +3,8 @@
 // Movement using arrow keys, HJKL, or WASD.
 //
 // Delete (i.e., select '-') using delete or backspace
+//
+// Select ✓ using c or y and ✗ using x or n
 
 function moveRight() {
   $(this).parent().nextAll().has('select').children().first().focus()
