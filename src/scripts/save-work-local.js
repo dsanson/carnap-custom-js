@@ -4,8 +4,7 @@
 // A script to save student work on Carnap.io
 //
 // -   saves work to localStorage.
-// -   doesn't work for truth tables, syntax problems, sequent calculus problems, or gentzen-prawtiz deductions
-// -   buggy
+// -   doesn't work for syntax problems, sequent calculus problems, or gentzen-prawtiz deductions
 
 function initSaveWork() {
   const debug = false;
@@ -98,7 +97,6 @@ function initSaveWork() {
     });
 
     // Truth Tables
-    // disabled, because caused trouble on reload
     $('[data-carnap-type=truthtable]').each(function () {
       saveArray($(this),'select');
     });
