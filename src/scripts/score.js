@@ -22,6 +22,11 @@
 //     about the student's progress through the assignment
 //
 
+
+function debuglog(message) {
+  console.log(message)
+}
+
 function buildTally() {
   let exercises = $('.exercise').filter(function () {
     let sub = $(this).children("[data-carnap-submission]")
@@ -137,12 +142,13 @@ function exerciseStatus(assn,scores) {
     let matches = scores.filter(m => {
       return m.source.substring(0,3) == ex.source.substring(0,3) && m.label == ex.label
     })
+
     // score is highest score from all matches
     let the_scores = []
     for (const e of matches) {
       the_scores.push(e.score)
     }
-    ex.score = the_scores.reduce((a,b) => a + b, 0)
+    ex.score = the_scores.reduce((a,b) => Math.max(a,b), 0)
 
     // set statuses
     if ( matches.length === 0 ) {
@@ -290,11 +296,11 @@ function updateBar(assn,standards,translation) {
     tip = `Congratulations! You have completed these exercises.`
   } else if ( assn.type == 'M' && assn['status'] == 'incomplete' ) {
     tip = `To complete this mastery check, you must score at least ${standards[assn.type].meets}%.
-               To request a retake, please <a href="https://groupme.com/join_group/88585614/zc95m6gj">DM me on GroupMe</a>.`
+               To request a retake, please <a href="https://groupme.com/contact/99365935/isjWnqLN">DM me on GroupMe</a>.`
   } else if ( assn.type == 'M' && assn['status'] == 'meets' ) {
     tip = `Congratulations! You have completed this mastery check! 
                To <i>master</i> this unit, you must score at least ${standards[assn.type].excels}%.
-               To request a retake, please <a href="https://groupme.com/join_group/88585614/zc95m6gj">DM me on GroupMe</a>.`
+               To request a retake, please <a href="https://groupme.com/contact/99365935/isjWnqLN">DM me on GroupMe</a>.`
   } else if ( assn.type == 'M' && assn['status'] == 'excels' ) {
     tip = `Congratulations! If you have also completed the reading and exercises, you have mastered this unit.` 
   } 
@@ -369,6 +375,7 @@ function initScoreKeeper() {
   //   (more than 2 dropdown items in the navbar means user is instructor)
   const dropdown = $('#navbar > ul > li:last-child ul')[0].children.length
   if (dropdown > 2) {
+    debuglog('instructor mode')    
     let user = $('#navbar > ul > li:last-child ul li:first-child a').attr('href')
     user = user.split('/').slice(-1)[0]
     userpage = userpage + '/' + user
