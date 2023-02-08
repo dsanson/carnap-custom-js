@@ -25,6 +25,10 @@ function tableOfContents() {
     else if ( course == 'ISU_112_FALL_2022' ) {
       version = '_f22'
     }
+    else if ( course == 'ISU_112_SPRING_2023' ) {
+      version = '_s23'
+    }
+
     const book = 'Book' + version
 
     // const menu_icon = '☰';
@@ -35,6 +39,7 @@ function tableOfContents() {
     toc_ul.load(book + ' #tableofcontents > ul,ol', function() {
 
       $('a.disabled').removeAttr("href");
+      $('a[href=' + current + ']').addClass('currentpage');
 
       try {
         if (typeof CarnapServerAPI.user !== 'undefined') {
@@ -51,8 +56,25 @@ function tableOfContents() {
     // $(toc_ul).appendTo(toc);
     // $(menu_button).prependTo(toc);
     // $('nav#navbar > ul > li:nth-child(3)').before(toc);
+ 
+    // mark current doc in toc
     
+
+    // build a toc for current doc
+    // let toc_doc = $('<ul></ul>')
+
+    // $('article h2').each(function() {
+    //   const id = $(this).attr('id')
+    //   const content = $(this).text() 
+    //   let li = $('<li></li>')
+    //   let anchor = $('<a href="#' + id + '">' + content + '</a>')
+    //   anchor.appendTo(li)
+    //   li.appendTo(toc_doc)
+    // })
+    // console.log(toc_doc) 
+
     $(toc_ul).appendTo('nav#navbar .book.dropdown');
+    // toc_doc.appendTo('.currentPage')
 }   
 
 

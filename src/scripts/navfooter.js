@@ -4,45 +4,25 @@
 // naming scheme and structure.
 
 function getPrevious(unit,type,viewertype) {
-  if ( type == 'R' ) {
-    unit = String(parseInt(unit) - 1).padStart(2,'0')
-    type = 'M'
-  } else if ( type == 'E' ) {
-    type = 'R'
-  } else if ( type == 'M' ) {
-    type = 'E'
-  } else if ( type == 'S' ) {
-    type = 'M'
-  }
-
-  if ( viewertype == 'shared' && type == 'M' ) {
-    type = 'E'
-  }
-
-  if ( unit < 0 || type == 'o') {
+  if ( unit == '00' || type == 'o') {
     return false
   } else {
-   return unit + type
+    type = 'R'
+    unit = String(parseInt(unit) - 1).padStart(2,'0')
+    return unit + type
   }
 }
 
 function getNext(unit,type,viewertype) {
-  if ( type == 'R' ) {
-    type = 'E'
-  } else if ( type == 'M' || type == 'S' || ( type == 'E' && viewertype == 'shared' ) ) {
-    type = 'R'
-    unit = String(parseInt(unit) + 1).padStart(2,'0')
-  } else if ( type == 'E' ) {
-    type = 'M'
-  }
 
-
-  if ( unit == 18 ) {
+  if ( unit == "17" ) {
     return false
   } else if ( type == 'o' ) {
     return '00R'
   } else {
-   return unit + type
+    type = 'R'
+    unit = String(parseInt(unit) + 1).padStart(2,'0')
+    return unit + type
   }
 }
 
@@ -54,10 +34,13 @@ function addNavFooter() {
   let unit = assn.slice(0,2)
   let type = assn.slice(2,3)
   let version = ''
-  console.log(assn)
   if ( assn.includes('_') ) {
     version = assn.slice(-4)
   }
+  if ( version == '_s23' ) {
+    version = ''
+  }
+
   let prev = getPrevious(unit,type,viewertype)
   let next = getNext(unit,type,viewertype)
 
