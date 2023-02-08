@@ -17,9 +17,9 @@ export function makeShapesLive() {
     $('.liveshapes').find(shape).each(function() {
         $(this).attr('contenteditable',true);
         $(this).keyup(function() {
-          content = $(this).html();
+          let content = $(this).html();
           if ( $(this).attr('data-to') ) {
-            filter = shape + '[data-to=' + $(this).attr('data-to') + ']';
+            let filter = shape + '[data-to=' + $(this).attr('data-to') + ']';
             $(this).parents('.liveshapes').find(filter).not($(this)).html(content);
           }
           else {
