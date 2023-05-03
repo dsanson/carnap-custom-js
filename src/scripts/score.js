@@ -32,7 +32,11 @@ function buildTally() {
     let sub = $(this).children("[data-carnap-submission]")
       .first()
       .attr("data-carnap-submission")
-    return sub.substring(0,6) === 'saveAs' 
+    if ( typeof sub === 'undefined' ) {
+      return false }
+    else { 
+      return sub.substring(0,6) === 'saveAs' 
+    }
   })
   let tally = $('.auto-tally').first() 
   if (! tally.length) { 
