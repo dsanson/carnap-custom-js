@@ -20,4 +20,4 @@ import './scripts/timer.js';
 import './scripts/mobile-hover.js';
 import './scripts/defs.js';
 import './scripts/reaction.js';
-
+import './scripts/copy-anchors.js';
