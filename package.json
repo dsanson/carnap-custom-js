@@ -16,11 +16,12 @@
     "css-loader": "^6.3.0",
     "eslint": "^8.23.0",
     "style-loader": "^3.3.0",
-    "webpack": "^5.54.0",
-    "webpack-cli": "^4.8.0",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^4.10.0",
     "yaml-loader": "^0.6.0"
   },
   "dependencies": {
+    "dragula": "^3.7.3",
     "plyr": "^3.6.8",
     "supermemo": "^2.0.17"
   }
