@@ -28,6 +28,9 @@ function tableOfContents() {
     else if ( course == 'ISU_112_SPRING_2023' ) {
       version = '_s23'
     }
+    else if ( course == 'ISU_112_FALL_2023' ) {
+      version = '_f23'
+    }
 
     const book = 'Book' + version
 

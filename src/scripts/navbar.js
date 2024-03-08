@@ -5,11 +5,11 @@
 // These links are likely to be course specific. For example,
 // I add links to my course CMS, a course Discord server, and course
 // Zoom links. So values are read from the "links" object inside the
-// current course, in config.json.
+// current course config.json.
 
-import config from '../config.json';
+import * as courseConfig from './course-config.js'
 
-function customizeNavbar() {                                                                            
+async function customizeNavbar() {                                                                            
 
   const bookicon = '<i class="bi bi-book"></i>';
   $('nav#navbar > ul > li:nth-child(3) > a').html(bookicon);
@@ -60,17 +60,18 @@ function customizeNavbar() {
   $('nav#navbar > ul > li:nth-child(3)').before(themeswitch)
 
   // add links
-  const linkargs = 'target="_blank" rel="noopener noreferrer"'
   
-  // individual course settings
-  let course = url.slice(-2)[0]
-
-  let links = config[course].links
-
+  // course links are defined in the global config file
+  const config = await courseConfig.config
+  const links = config.course.links
   for (const link of links) {
     // if no icon, use name 
     if (typeof link.icon === 'undefined') {
       link.icon = link.name
+    }
+    let linkargs = ''
+    if ( link.external ) {
+      linkargs = 'target="_blank" rel="noopener noreferrer"'
     }
    
     // if url, make icon a link
@@ -92,12 +93,15 @@ function customizeNavbar() {
       li = $(`<li>${link.icon}</li>`)
     }
 
-    $('nav#navbar > ul > li:nth-child(3)').before(li)
+    $('nav#navbar > ul > li:nth-child(3)').after(li)
   }
 
 } 
 
+document.addEventListener("DOMContentLoaded", function(){
+  customizeNavbar()
+})
 
-$(document).ready(function() {                                                                          
-    customizeNavbar()
-});
+// $(document).ready(function() {                                                                          
+//     customizeNavbar()
+// });

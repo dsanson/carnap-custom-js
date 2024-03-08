@@ -52,6 +52,20 @@
 
 import Plyr from 'plyr';
 
+function autoURL(ex) {
+  const type = $(ex).attr('data-carnap-type')
+  let problem = ""
+  if ( ex.hasAttribute('data-carnap-problem') ) {
+    problem = $(ex).attr('data-carnap-problem') 
+  } else if ( ex.hasAttribute('data-carnap-goal') ) {
+    problem = $(ex).attr('data-carnap-goal') 
+  }
+  problem = problem.trim()
+    .replace(/[.]*$/, '')
+    .replace(/ +/g, '_')
+  return encodeURIComponent(type + '_' + problem + '.mp4')
+}
+
 function insertVids() {
 
   const server = "https://dsanson.github.io/logic-materials/vid/"
@@ -59,15 +73,11 @@ function insertVids() {
   $('div[data-carnap-video]').each(function() {
     let url = $(this).attr('data-carnap-video')
     if ( url == 'auto' ) {
-      const type = $(this).attr('data-carnap-type')
-      let problem = $(this).attr('data-carnap-problem').trim()
-      problem = problem.replace(/[.]*$/, '')
-      problem = problem.replace(/ +/g, '_')
-      url = encodeURIComponent(type + '_' + problem + '.mp4')
+      url = autoURL(this)
       url = server + url
-      console.log(url)
     }
     else if ( url.substring(0,4) != 'http' ) {
+      //console.log('git mv "' + url + '" "' + autoURL(this) + '"')
       url = server + url
     }
     const ex = $(this).parent().attr('id')
@@ -134,6 +144,7 @@ $(document).ready(function() {
     }
 
   Plyr.setup('video',opts);
+  Plyr.setup('audio',opts);
 
   youtubeEmbeds();
   Plyr.setup('.youtube',opts);

@@ -4,7 +4,7 @@
 // naming scheme and structure.
 
 function getPrevious(unit,type,viewertype) {
-  if ( unit == '00' || type == 'o') {
+  if ( unit == '00' ) {
     return false
   } else {
     type = 'R'
@@ -37,8 +37,13 @@ function addNavFooter() {
   if ( assn.includes('_') ) {
     version = assn.slice(-4)
   }
-  if ( version == '_s23' ) {
+  if ( version == '_f23' ) {
     version = ''
+  }
+  
+  if ( type != 'R' ) {
+    // only footers for readings
+    return
   }
 
   let prev = getPrevious(unit,type,viewertype)

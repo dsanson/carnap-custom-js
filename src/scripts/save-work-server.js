@@ -1,55 +1,50 @@
 /* eslint-env jquery */
 
 /* global AssignmentState, putAssignmentState, document, window */
-// save_work.js
+// save-work-server.js
 // A script to save student work on Carnap.io
 //
-// -   saves work to localStorage.
+// -   saves work to server using CarnapServerAPI
 // -   doesn't work for syntax problems, sequent calculus problems, or gentzen-prawtiz deductions
 
-function initSaveWork() {
+// unique hashes (https://stackoverflow.com/a/52171480)
+
+const getHash = s => {for(var i=0,h=9;i<s.length;)h=Math.imul(h^s.charCodeAt(i++),9**9);return h^h>>>9}
+
+function getId($exercise) {
+
+  const label = $exercise.parent().attr('data-carnap-label')
+
+  let type = $exercise.attr('data-carnap-type')
+  // qualitative problems come in many types
+  if (type == 'qualitative') {
+    type = $exercise.attr('data-carnap-qualitativetype')
+  }
+  // shorten type to use as label
+  if (type == 'proofchecker') type = 'pr'
+  if (type == 'truthtable') type = 'tt'
+  if (type == 'countermodeler') type = 'cm'
+  if (type == 'multiplechoice') type = 'mc'
+  if (type == 'multipleselection') type = 'ms'
+  if (type == 'shortanswer') type = 'sa'
+  if (type == 'numerical') type = 'nu'
+  if (type == 'translate') type = 'tr'
+  
+  const hash = getHash($exercise.attr('data-carnap-goal'))
+
+  return `${label}-${type}-${hash}`
+}
+
+async function initSaveWork() {
   const debug = false;
+  if (debug) { console.log('save-work-server.js debugging on') }
   
   // get the assignment name
-  a = location.pathname.split('/').slice(-1)[0]
-  const namespace = 'saved-work-' + a;
+  const assn = location.pathname.split('/').slice(-1)[0]
+  const namespace = 'saved-work-' + assn;
 
   let items = new Object();
-  let ids = []; // a list for tracking duplicate ids
   let firstload = true;
-
-  if (debug) console.log('save-work-local.js debugging on')
-
-  function getId($exercise) {
-
-    let l = $exercise.parent().attr('data-carnap-label')
-    let t = $exercise.attr('data-carnap-type')
-    // qualitative problems come in many types
-    if (t == 'qualitative') {
-      t = $exercise.attr('data-carnap-qualitativetype')
-    }
-
-    // shorten type to use as label
-    if (t == 'proofchecker') t = '-pr'
-    if (t == 'truthtable') t = '-tt'
-    if (t == 'countermodeler') t = '-cm'
-    if (t == 'multiplechoice') t = '-mc'
-    if (t == 'multipleselection') t = '-ms'
-    if (t == 'shortanswer') t = '-sa'
-    if (t == 'numerical') t = '-nu'
-    if (t == 'translate') t = '-tr'
-    
-    let id = l + t 
-    
-    n = 0
-    while ( ids.includes(id) ) {
-      n = n + 1;
-      id = id + '-' + n.toString();
-    }
-    ids.push(id);
-
-    return id;
-  }
 
   function saveSimple($exercise, workdiv) {
       const exerciseId = getId($exercise);
@@ -80,8 +75,6 @@ function initSaveWork() {
 
     if (debug) console.log('saving work');
 
-    ids = [];  // reset found list of found ids
-
     // Translation and Numerical
     $('[data-carnap-type=translate], [data-carnap-qualitativetype=numerical]').each(function () {
       saveSimple($(this),'input');
@@ -111,7 +104,8 @@ function initSaveWork() {
     // Sequent Calculus Problems
     // Gentzen-Prawitz Natural Deduction Problems
 
-    localStorage.setItem(namespace, JSON.stringify(items));
+    // localStorage.setItem(namespace, JSON.stringify(items));
+    CarnapServerAPI.putAssignmentState(namespace,JSON.stringify(items))
     if (debug) console.log('done saving work');
   }
 
@@ -179,8 +173,6 @@ function initSaveWork() {
 
     if (debug) console.log('loading saved work');
 
-    ids = [];  // reset found list of found ids
-
     // Translation and Numerical
     $('[data-carnap-type=translate], [data-carnap-qualitativetype=numerical]').each(function () {
       loadSimple($(this), 'input');
@@ -215,19 +207,14 @@ function initSaveWork() {
 
   }
 
-  function fetchWork() {
-    try {
-        if (debug) console.log('Fetching saved work from local storage')
-        items = JSON.parse(localStorage.getItem(namespace));
-        if (items === null) {
-          items = {};
-        }
-        loadWork();
-
-    } catch {
-        if (debug) console.log('no saved work to load')
+  async function fetchWork() {
+    if (debug) console.log('Fetching saved work from storage')
+    const items = await CarnapServerAPI.getAssignmentState()
+    if (items === null) {
+      items = {};
     }
-
+    if (debug) console.log(items)
+    loadWork();
 
     // use Page Visibility API instead of beforeunload for mobile friendly saving
     // https://www.igvita.com/2015/11/20/dont-lose-user-and-app-state-use-page-visibility/

@@ -23,6 +23,8 @@
 //
 
 
+import * as courseConfig from './course-config.js'
+
 function debuglog(message) {
   console.log(message)
 }
@@ -64,18 +66,26 @@ function buildTally() {
 }
 
 function createProgressReport(assn,standards,translation) {
-  const pctreport = `<li>
-    Percentage: 
-      <span class="pct">${assn.percentage}%</span>
+  const titlebanner = `<li>
+    Unit ${assn.label}: ${assn.title}
     </li>`
   const ptsreport = `<li>
     Score: 
       <span class="score">${assn.score}</span>/<span class="total">${assn.total_points}</span>
+      (<span class="pct">${assn.percentage}%</span>)
     </li>`
   const statusreport = `<li>
       Status: 
       <span class="status">${translation[assn['status']]}</span>
     </li>` 
+  const duedatereport = `<li>
+      Start before 
+      <span class="due-date">${assn["start-date"].toLocaleString()}</span>
+    </li>`
+  const expdatereport = `<li>
+      Expires on
+      <span class="due-date">${assn["expiration-date"].toLocaleString()}</span>
+    </li>`
   const tiptext = `<li>
     <span class="progresstip">Submissions not enabled. Perhaps you are not viewing this as an assignment?</span></li>`
 
@@ -112,10 +122,12 @@ function createProgressReport(assn,standards,translation) {
   report.prepend(progressbar)
 
   let dropdown_ul = $('<ul></ul>')
-  dropdown_ul.append(pctreport)
+  dropdown_ul.append(titlebanner)
   dropdown_ul.append(ptsreport)
   dropdown_ul.append(statusreport)
   dropdown_ul.append(tiptext)
+  dropdown_ul.append(duedatereport)
+  dropdown_ul.append(expdatereport)
   let tally = buildTally()
   tally.first().appendTo(dropdown_ul)
 
@@ -309,10 +321,17 @@ function updateBar(assn,standards,translation) {
     tip = `Congratulations! If you have also completed the reading and exercises, you have mastered this unit.` 
   } 
 
-  $('.report li span.percentage').html(assn.percentage + '%')
+  $('.report li span.pct').html(assn.percentage + '%')
   $('.report li span.score').html(assn.score)
   $('.report li span.status').html(translation[assn['status']])
   $('.report li span.progresstip').html(tip)
+}
+
+async function ghostSubmissions(scores) {
+  if ( scores.filter( s => s.source == "GradeBook").length < 7 ) {
+    const dummy = $('<iframe style="position: absolute; left: -9999px;">').attr('src','https://carnap.io/assignments/ISU_112_FALL_2023/GradeBook')
+    $('body').append(dummy)
+  }
 }
 
 function scrapeScoresAndUpdate(userpage,scoreselector,assn,standards,translation) {
@@ -342,34 +361,36 @@ function scrapeScoresAndUpdate(userpage,scoreselector,assn,standards,translation
   flagDependencies(assn)
   updateExerciseDisplay(assn)
   updateBar(assn,standards,translation)
+  ghostSubmissions(scores)
   })
 }
 
-function initScoreKeeper() {                                                                            
+async function initScoreKeeper() {                                                                            
 
   const url = document.location.pathname.split('/')
   // const course = url.slice(-2)[0]
   const current = url.slice(-1)[0]
   
+  const currenttype = current.slice(2,3).toUpperCase()
+  if ( currenttype != "R" && currenttype != "M" ) {
+    return // only calculate scores for reading and mastery checks
+  }
+
+  const config = await courseConfig.config
+
   //TODO: move course specific config to config.json
   // grading standards
-  let standards = { 
-          R: { meets: 100 },
-          E: { meets: 80 },
-          M: { meets: 60, excels: 80 }
-        }
+  const standards = config.course.standards
+  standards.R = standards.reading
+  standards.M = standards.mc
 
   // translation of 'meets' and 'excels' into student facing terminology
   const translation = {
          incomplete: 'Not yet complete',
          meets: 'Complete',
          excels: 'Excellent'
-    }
-
-  const currenttype = current.slice(2,3).toUpperCase()
-  if ( currenttype == "S" ) {
-    return // don't calculate scores for supplements
   }
+
 
   // these settings work for students
   let userpage = '/user'
@@ -390,19 +411,29 @@ function initScoreKeeper() {
     //calculateCourseGrade(userpage,scoreselector)
     return // no on-going score checking for this page!
   }
-
   // create an empty div to load scores from userpage
 
+  // let points = 0
+  // try {
+  //   if (typeof CarnapServerAPI.assignment.pointValue !== 'undefined') {
+  //     points = CarnapServerAPI.assignment.pointValue
+  //   }
+  // } catch {
+  //   points = 0
+  // }
+
+  const pageData = config.contents.pages.find( p => p.label == current.substring(0,2) )
+
   let points = 0
-  try {
-    if (typeof CarnapServerAPI.assignment.pointValue !== 'undefined') {
-      points = CarnapServerAPI.assignment.pointValue
-    }
-  } catch {
-    points = 0
+  if ( currenttype == 'M' ) {
+    points = pageData["mc-points"]
+  } else {
+    points = pageData["points"]
   }
 
-  let assn = { 
+  const assn = { 
+    'label': pageData["label"],
+    'title': pageData["title"],
     'source': current,
     'score': 0,
     'total_points': points,
@@ -410,7 +441,11 @@ function initScoreKeeper() {
     'type': currenttype,
     'status': "incomplete",
     'exercises': [],
+    'start-date': pageData["start-date"].toLocaleDateString(),
+    'expiration-date': pageData["expiration-date"].toLocaleDateString()
   }
+
+
  
   createProgressReport(assn,standards,translation)
 
@@ -419,7 +454,7 @@ function initScoreKeeper() {
   }
 
   scrapeScoresAndUpdate(userpage,scoreselector,assn,standards,translation)
- 
+
   $('.exercise .buttonWrapper button').on('problem-submission', function() { 
     assn.exercises = []
     scrapeScoresAndUpdate(userpage,scoreselector,assn,standards,translation)
