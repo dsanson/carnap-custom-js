@@ -40,10 +40,10 @@ function buildTOC(config) {
       
       const dates = $('<span class="dates">')
 
-      if ( p.hasOwnProperty('mc-paper') && p["mc-paper"] === true ) {
+      if ( unit.hasOwnProperty('mc-paper') && unit["mc-paper"] === true ) {
         let mcicon = $('<span class="mc-type">✎ </span>')
         dates.append(mcicon)
-      } else if ( p.hasOwnProperty("mc-points") ) {
+      } else {
         let mcicon = $('<span class="mc-type">🖥 </span>;')
         dates.append(mcicon)
       }

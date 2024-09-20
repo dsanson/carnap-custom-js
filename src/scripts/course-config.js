@@ -1,14 +1,14 @@
 function calculateDueDates(config) {
   let weekDay = {
     'expiration': 5, 
-    'start': 6,
+    'due': 5,
   }
-  const start = new Date(config.course["start-date"] + "T00:00")
+  const start = new Date(config.course["start-date"] + "T23:59")
   const end = new Date(config.course["end-date"] + "T23:59")
   const firstDay = new Date(config.course["first-day-of-classes"] + "T00:00")
   const lastDay = new Date(config.course["last-day-of-classes"] + "T17:00")
   const lastDayOfFinals = new Date(config.course["last-day-of-finals"] + "T23:59")
-  const props = [ 'start', 'expiration' ]
+  const props = [ 'due', 'expiration' ]
   for ( const i in props) {
     config.contents.pages.forEach( p => {
       const orig = props[i] + '-week'
@@ -24,7 +24,7 @@ function calculateDueDates(config) {
           p[calc] = new Date(config.course["start-date"] + "T23:59")
           p[calc].setDate(start.getDate() - start.getDay() + weekDay[props[i]] + (p[orig] - 1) * 7)
         }
-        if ( props[i] == 'start' ) {
+        if ( props[i] == 'due' ) {
           p[calc] = p[calc]
           //.toLocaleDateString('en-US')
         }

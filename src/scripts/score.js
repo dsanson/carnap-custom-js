@@ -79,11 +79,11 @@ function createProgressReport(assn,standards,translation) {
       <span class="status">${translation[assn['status']]}</span>
     </li>` 
   const duedatereport = `<li>
-      Start before 
-      <span class="due-date">${assn["start-date"].toLocaleString()}</span>
+      Due date:
+      <span class="due-date">${assn["due-date"].toLocaleString()}</span>
     </li>`
   const expdatereport = `<li>
-      Expires on
+      Expiration date:
       <span class="due-date">${assn["expiration-date"].toLocaleString()}</span>
     </li>`
   const tiptext = `<li>
@@ -311,12 +311,10 @@ function updateBar(assn,standards,translation) {
   } else if ( assn.type == 'E' && assn['status'] == 'meets' ) {
     tip = `Congratulations! You have completed these exercises.`
   } else if ( assn.type == 'M' && assn['status'] == 'incomplete' ) {
-    tip = `To complete this mastery check, you must score at least ${standards[assn.type].meets}%.
-               To request a retake, please <a href="https://groupme.com/contact/99365935/isjWnqLN">DM me on GroupMe</a>.`
+    tip = `To complete this mastery check, you must score at least ${standards[assn.type].meets}%.`
   } else if ( assn.type == 'M' && assn['status'] == 'meets' ) {
     tip = `Congratulations! You have completed this mastery check! 
-               To <i>master</i> this unit, you must score at least ${standards[assn.type].excels}%.
-               To request a retake, please <a href="https://groupme.com/contact/99365935/isjWnqLN">DM me on GroupMe</a>.`
+               To <i>master</i> this unit, you must score at least ${standards[assn.type].excels}%.`
   } else if ( assn.type == 'M' && assn['status'] == 'excels' ) {
     tip = `Congratulations! If you have also completed the reading and exercises, you have mastered this unit.` 
   } 
@@ -441,7 +439,7 @@ async function initScoreKeeper() {
     'type': currenttype,
     'status': "incomplete",
     'exercises': [],
-    'start-date': pageData["start-date"].toLocaleDateString(),
+    'due-date': pageData["due-date"].toLocaleDateString(),
     'expiration-date': pageData["expiration-date"].toLocaleDateString()
   }
 

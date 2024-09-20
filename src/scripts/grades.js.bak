@@ -114,7 +114,7 @@ function calculateGrades(course,user) {
     } else {
       grade.mc_complete = false
     } 
-    grade.status = 'Not started'
+    grade.status = 'Not passed'
     if ( grade.reading_complete && grade.mc_complete ) {
       grade.unit_complete = true
       grade.status = 'Passed'
@@ -127,9 +127,6 @@ function calculateGrades(course,user) {
     } else {
       grade.unit_mastered = false
     } 
-    if ( grade.reading_score > 0 && grade.unit_complete == false ) {
-      grade.status = 'In progress'
-    }
     user.grades.by_unit[unit.label] = grade
   })
   
@@ -140,9 +137,9 @@ function calculateGrades(course,user) {
   } else {
     user.grades.collab_points = 0
   }
-  if ( user.grades.collab_points >= 240 ) {
+  if ( user.grades.collab_points >= 200 ) {
     user.grades.collab_units = 2
-  } else if ( user.grades.collab_points >= 120 ) {
+  } else if ( user.grades.collab_points >= 100 ) {
     user.grades.collab_units = 1
   } else {
     user.grades.collab_units = 0
@@ -216,54 +213,29 @@ function getStudents(course,menu,button,userid) {
   })
 }
 
-// given a date, return one of three values: 'future', 'soon', 'past'
-
-function whenDue(d) {
-  let now = new Date()
-  let soon = new Date()
-  soon.setDate(now.getDate() + 7)
-  if ( d < now ) {
-    return 'past'
-  } else if ( d < soon ) {
-    return 'soon'
-  } else {
-    return 'future'
-  }
-}
-
 function displayGrades(course,user) {
   //debuglog(JSON.stringify(user.grades))
 
   // overview of course progress
   const message = `
     <p>
-     Online scores are updated immediately; collaboration points and on-paper mastery check scores are not.
-     I plan to update the gradebook at least once a week throughout the term.
+     Online scores are updated immediately, but collaboration points and scores for on-paper mastery checks
+     are entered manually, so expect delays. I plan to update the gradebook at least once a week throughout
+     the term.
     </p>
     <p>
-     Here is a condensed progress report, showing which units you have <span style="color:var(--success)">passed</span> and
-     which you have <span style="color:var(--excels)">aced</span>:
-    </p>
-    <div id="progress-report">
-    </div>
+     Total units passed: ${user.grades.total_units_complete}. 
+     Total units aced: ${user.grades.total_units_mastered}.</p> 
     <p>
-     Total passed: ${user.grades.total_units_complete}. 
-     Total aced: ${user.grades.total_units_mastered}.</p> 
-    <p>
-    <p id="collab-report">
+     You currently have ${user.grades.collab_points} collaboration points, meaning that you have passed
+     ${user.grades.collab_units} collaboration units. These are already included
+     in the calculation of your total ${user.grades.total_units_complete} passed units, given above.
     </p>
-
-
-    <!--
     <p>
      As of now, you have earned a ${user.grades.letter_grade}. That means that, if
      you never do another thing for this course, that is grade you will receive.
     </p>
-    -->`
-    
-  // construct a progress bar that displays status of each unit in compact form
-  let progress_bar = $('<div id="progress-bar">')
-
+    `
   // construct table that displays status of each unit
   let units_table = $('<table>')
   units_table.css("width","100%").css("min-width","90vw").css("font-size","10pt").css("line-height","100%").css("margin-left","0")
@@ -273,38 +245,17 @@ function displayGrades(course,user) {
   let row = $('<tr>')
     .attr('id','unit-collab')
   let name = $(`<td class=name><a href="${course.base_url}/00R#collaboration-units">Collaboration</a></td>`)
-  let status = $(`<td class=status>${user.grades.collab_units} passed</td>`)
+  let status = $(`<td class=status>${user.grades.collab_units} complete</td>`)
   if ( user.grades.collab_units == 0 ) {
-    status = $(`<td class=status>In progress</td>`)
+    status = $(`<td class=status>None complete</td>`)
   }
   let scores = $(`<td class=scores>Collaboration points: ${user.grades.collab_points}</td>`)
   row.append(name)
   row.append(status)
   row.append(scores)
   row.append($(`<td>`))
-  row.append($(`<td>`))
-  row.append($(`<td>`))
   units_table.append(row)
 
-  //let collab_one = $('<span class="unit-box">C</span>')
-  //let collab_two = $('<span class="unit-box">C</span>')
-
-  //let p = user.grades.collab_points
-  //if ( p >= 200 ) {
-  //  collab_one.addClass('complete')
-  //  collab_two.addClass('complete')
-  //} else if ( p < 100 ) {
-  //  // style collab_one based on points
-  //  collab_one.css('background',`linear-gradient(to right, var(--success) ${p}%, white 50%)`)
-  //} else if ( p == 100 ) {
-  //  collab_one.addClass('complete')
-  //} else {
-  //  collab_one.addClass('complete')
-  //  collab_two.css('background',`linear-gradient(to right, var(--success) ${p - 100}%, white 50%)`)
-  //}
-
-  //progress_bar.append(collab_one)
-  //progress_bar.append(collab_two)
 
   // unit scores
   course.units.map( unit => {
@@ -320,12 +271,8 @@ function displayGrades(course,user) {
        .text("Not yet enabled")
     let scores = $('<td>')
        .addClass('scores')
-    let due = $('<td>')
-       .addClass('due')
-    let expires = $('<td>')
-       .addClass('expires')
-    let mctype = $('<td>')
-       .addClass('mctype')
+    let dates = $('<td>')
+       .addClass('dates')
 
     if ( unit.enabled ) { 
       row.removeClass('disabled')
@@ -360,60 +307,36 @@ function displayGrades(course,user) {
       if ( user.grades.by_unit[unit.label].mc_mastered ) {
         mc.addClass('mastered')
       }
+      if ( unit.hasOwnProperty('mc-paper') && unit["mc-paper"] === true ) {
+        let mctype = $('<span class="mc-type">✎</span>')
+        dates.append(mctype)
+        dates.append('<br>')
+      } else {
+        let mctype = $('<span class="mc-type">🖥</span>')
+        dates.append(mctype)
+        dates.append('<br>')
+      }
       if ( unit.hasOwnProperty('due-date') ) {
-        let when = whenDue(unit["due-date"])
-        let duedate = $(`<span class="start-date ${when}">${unit["due-date"].toLocaleDateString()}</span>`)
-        due.append(duedate)
+        let due = $(`<span class="start-date">Due on ${unit["due-date"].toLocaleDateString()}</span>`)
+        dates.append(due)
       }
       if ( unit.hasOwnProperty('expiration-date') ) {
-        let when = whenDue(unit["due-date"])
-        let expdate = $(`<span class="expiration-date ${when}">${unit["expiration-date"].toLocaleDateString()}</span>`)
-        expires.append(expdate)
-      }
-      if ( unit.hasOwnProperty('mc-paper') && unit["mc-paper"] === true ) {
-        let mcicon = $('<span class="mc-type">✎</span>')
-        mctype.append(mcicon)
-      } else {
-        let mcicon = $('<span class="mc-type">🖥</span>')
-        mctype.append(mcicon)
+        let exp = $(`<span class="expiration-date">Expires on ${unit["expiration-date"].toLocaleDateString()}</span>`)
+        dates.append('<br>')
+        dates.append(exp)
       }
     }
 
     row.append(name)
     row.append(status)
     row.append(scores)
-    row.append(due)
-    row.append(expires)
-    row.append(mctype)
+    row.append(dates)
     units_table.append(row)
-
-    // progress-bar
-    let unit_box = $(`<span class="unit-box">${unit.label}</span>`)
-    if ( user.grades.by_unit[unit.label].unit_complete ) {
-      unit_box.addClass('complete')
-    }
-    if ( user.grades.by_unit[unit.label].unit_mastered ) {
-      unit_box.addClass('mastered')
-    }
-    progress_bar.append(unit_box)
   })
 
-  // collab report
-  let collab_report = ''
-  if ( user.grades.collab_units == 0 ) {
-    collab_report = `You currently have ${user.grades.collab_points} collaboration points, and
-     are working toward completing your first collaboration unit, by earning 120 points!`
-  } else if ( user.grades.collab_units == 1 ) {
-    collab_report = `You currently have ${user.grades.collab_points} collaboration points, and
-     so you have passed one collaboration unit, and are working toward 240 points, to pass your second.`
-  } else {
-    collab_report = `You have passed both collaboration units.`
-  }
 
   $('.grade-report #grade_message').html(message)
   $('.grade-report #units_table').html(units_table)
-  $('#progress-report').prepend(progress_bar)
-  $('#collab-report').text(collab_report)
 }
 
 async function dummySubmit(exs) {
